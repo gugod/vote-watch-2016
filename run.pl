@@ -6,7 +6,7 @@ use HTTP::Tiny;
 use File::Path qw<make_path>;
 use File::Slurp qw<write_file read_file>;
 
-my $json = JSON::PP->new;
+my $json = JSON::PP->new->canonical->pretty;
 my $watchlist = $json->decode( scalar read_file("${FindBin::Bin}/watchlist.json") );
 
 my $http = HTTP::Tiny->new;
