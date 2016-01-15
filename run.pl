@@ -30,3 +30,7 @@ for my $k (keys %$watchlist) {
         write_file "${output_dir}/page.html", $res->{content};        
     }
 }
+
+chdir($FindBin::Bin);
+system("git add -A data");
+system(q< git commit --author 'nobody <nobody@nowhere>' --allow-empty-message -m '' >);
