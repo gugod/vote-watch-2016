@@ -22,21 +22,24 @@ sub epoch {
 sub MAIN {
     my $files = File::Next::files('data');
     while (defined( my $file = $files->() )) {
-        my ($what, $branch, $t) = $file =~ m{data/([^/]+)/([^/]+)/([0-9]{14}+)/page\.html};
+        my ($what, $branch, $t) = $file =~ m{data/([^/]+)/([^/]+)/([0-9]{14})/page\.html};
         next unless $what && $branch && $t;
 
         # say "$what - $branch - $t --- $file";
         my $html = read_file($file, { binmode => ":utf8" });
         my $dom  = Mojo::DOM->new($html);
 
+        open my $ts_fh, ">>", "data/${what}/time-series-graphite";
         $dom->find("tr.trT")->each(
             sub {
                 my @cells = $_->find("td")->map('text')->each;
                 my ($name, $value) = grep { /\d+/ } @cells;
                 $value =~ s/,//;
-                say "${what}.${branch}.${name} ${value} " . epoch($t);
+                my $line = "${what}.${branch}.${name} ${value} " . epoch($t);
+                say $ts_fh $line;
             }
-        );    
+        );
+        close($ts_fh);
     }
 }
 MAIN();
