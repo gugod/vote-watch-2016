@@ -17,7 +17,7 @@ for my $k (keys %$watchlist) {
         $urls = [$urls];
     }
     for my $url (@$urls) {
-        my $fn = $url =~ m{/(.+)\.html$};
+        my ($fn) = $url =~ m{/(.+)\.html$};
         say "$k => $url";
         my $now = time;
         my ($sec, $min, $hour, $mday, $mon, $year) = gmtime(time);
