@@ -1,0 +1,15 @@
+{
+   "content" : "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body bgcolor=\"white\">\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n",
+   "headers" : {
+      "connection" : "close",
+      "content-length" : "162",
+      "content-type" : "text/html",
+      "date" : "Sat, 16 Jan 2016 01:20:20 GMT",
+      "server" : "nginx"
+   },
+   "protocol" : "HTTP/1.1",
+   "reason" : "Not Found",
+   "status" : "404",
+   "success" : "",
+   "url" : "http://vote2016.cec.gov.tw/zh_TW/T1/n400060000000000.html"
+}
