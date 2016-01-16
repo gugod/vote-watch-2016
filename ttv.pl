@@ -23,3 +23,7 @@ write_file "${output_dir}/http-response.json", $res_dump;
 if ($res->{success}) {
     write_file "${output_dir}/p.txt.json", $res->{content};        
 }
+
+chdir($FindBin::Bin);
+system("git add -A data");
+system(q< git commit --author 'nobody <nobody@nowhere>' --allow-empty-message -m '' >);
