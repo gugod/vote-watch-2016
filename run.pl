@@ -17,7 +17,7 @@ for my $k (keys %$watchlist) {
     my $now = time;
     my ($sec, $min, $hour, $mday, $mon, $year) = gmtime(time);
     $year += 1900;
-    $mday += 1;
+    $mon += 1;
 
     my $output_dir = sprintf('data/%s/%04d%02d%02d%02d%02d%02d', $k, $year, $mon, $mday, $hour, $min, $sec);
     make_path($output_dir) unless -d $output_dir;
