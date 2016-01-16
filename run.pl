@@ -9,9 +9,11 @@ use File::Slurp qw<write_file read_file>;
 my $json = JSON::PP->new->canonical->pretty;
 my $watchlist = $json->decode( scalar read_file("${FindBin::Bin}/watchlist.json") );
 
-my $http = HTTP::Tiny->new;
 
-for my $k (keys %$watchlist) {
+my $http = HTTP::Tiny->new;
+my @grabs = @ARGV > 0 ? @ARGV : (keys %$watchlist);
+
+for my $k (@grabs) {
     my $urls = $watchlist->{$k};
 
     unless (ref($urls)) {
