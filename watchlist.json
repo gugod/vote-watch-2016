@@ -1,5 +1,13 @@
 {
-    "president":"http://vote2016.cec.gov.tw/zh_TW/P1/n000000000000000.html",
+    "president":[
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n000000000000000.html",
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n100000000000000.html",
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n200000000000000.html",
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n300000000000000.html",
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n400000000000000.html",
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n500000000000000.html",
+        "http://vote2016.cec.gov.tw/zh_TW/P1/n600000000000000.html"
+    ],
     "nativeflat":"http://vote2016.cec.gov.tw/zh_TW/T2/n000000000000000.html",
     "nativemoun":"http://vote2016.cec.gov.tw/zh_TW/T3/n000000000000000.html",
     "atlarge":"http://vote2016.cec.gov.tw/zh_TW/T4/n000000000000000.html",
