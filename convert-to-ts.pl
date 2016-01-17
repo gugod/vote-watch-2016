@@ -58,12 +58,15 @@ sub MAIN {
     }
 
     my $township_name = load_number_mapping();
-    my $json = JSON::PP->new->pretty->canonical;
+    my $json = JSON::PP->new->pretty->canonical->utf8;
     for my $what (keys %$metric) {
         for my $target (keys %{$metric->{$what}}) {
             my $v = $metric->{$what}{$target};
             @{$v->{values}} = sort { $a->[1] <=> $b->[1] } @{$v->{values}};
             $v->{township_name} = $township_name->{ $v->{township_number} };
+            if (!$v->{township_name}) {
+                say "Unknown township_number: $v->{township_number}";
+            }
         }
         my $metric_list = [ map { $metric->{$what}{$_} } sort { $a cmp $b } keys %{$metric->{$what}} ];
         my $json_text = $json->encode($metric_list);
