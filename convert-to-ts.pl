@@ -23,7 +23,7 @@ sub epoch {
 
 sub load_number_mapping {
     my @lines = read_file("number-mapping.csv", { binmode => ":utf8" });
-    return { map { split(/,/, 2)} @lines };
+    return { map { chomp; split(/,/, $_, 2); } @lines };
 }
 
 sub MAIN {
@@ -80,4 +80,5 @@ sub MAIN {
         close($ts_fh);
     }
 }
+
 MAIN();
