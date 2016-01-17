@@ -37,7 +37,6 @@ sub MAIN {
         my $html = read_file($file, { binmode => ":utf8" });
         my $dom  = Mojo::DOM->new($html);
 
-        open my $ts_fh, ">>", "data/${what}/time-series-graphite";
         $dom->find("tr.trT")->each(
             sub {
                 my @cells = $_->find("td")->map('text')->each;
@@ -46,30 +45,39 @@ sub MAIN {
                 my $target = "${what}.${township}.${candidate}";
                 my $epoch  = epoch($t);
                 my $line = "${target} $epoch";
-                say $ts_fh $line;
                 $metric->{$what}{$target} //= {
                     target => $target,
                     what => $what,
-                    township => $township,
+                    township_number => $township,
                     candidate => $candidate,
                     values => []
                 };
                 push @{$metric->{$what}{$target}{values}}, [ $votes, $epoch ];
             }
         );
-        close($ts_fh);
     }
 
+    my $township_name = load_number_mapping();
     my $json = JSON::PP->new->pretty->canonical;
     for my $what (keys %$metric) {
         for my $target (keys %{$metric->{$what}}) {
             my $v = $metric->{$what}{$target};
             @{$v->{values}} = sort { $a->[1] <=> $b->[1] } @{$v->{values}};
+            $v->{township_name} = $township_name->{ $v->{township_number} };
         }
-
-        my $metric_list = [ map { $metric->{$what}{$_} } keys %{$metric->{$what}} ];
+        my $metric_list = [ map { $metric->{$what}{$_} } sort { $a cmp $b } keys %{$metric->{$what}} ];
         my $json_text = $json->encode($metric_list);
         write_file("data/$what/time-series.json", \$json_text);
+
+        open my $ts_fh, ">", "data/${what}/time-series-graphite";
+        for (@$metric_list) {
+            my $target = $_->{target};
+            for (@{$_->{values}}){
+                my ($value, $t) = ($_->[0], $_->[1]);
+                say $ts_fh "$target $value $t";
+            }
+        }
+        close($ts_fh);
     }
 }
 MAIN();
