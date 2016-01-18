@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use v5.18;use strict;use warnings;use autodie;
-
+use utf8;
+use Encode q<encode_utf8>;
 use JSON::PP;
 use File::Slurp qw<read_file write_file>;
 use Mojo::DOM;
@@ -37,6 +38,11 @@ sub MAIN {
         my $html = read_file($file, { binmode => ":utf8" });
         my $dom  = Mojo::DOM->new($html);
 
+        my $township_name;
+        for my $xxx ($dom->find("#divContent tr:first-child")->each) {
+            ($township_name) = $xxx->all_text() =~ /選舉\s(.+)得票數/;
+        }
+
         $dom->find("tr.trT")->each(
             sub {
                 my @cells = $_->find("td")->map('text')->each;
@@ -49,6 +55,7 @@ sub MAIN {
                     target => $target,
                     what => $what,
                     township_number => $township,
+                    township_name   => $township_name,
                     candidate => $candidate,
                     values => []
                 };
@@ -57,15 +64,14 @@ sub MAIN {
         );
     }
 
-    my $township_name = load_number_mapping();
+    my $township_names = load_number_mapping();
     my $json = JSON::PP->new->pretty->canonical->utf8;
     for my $what (keys %$metric) {
         for my $target (keys %{$metric->{$what}}) {
             my $v = $metric->{$what}{$target};
             @{$v->{values}} = sort { $a->[1] <=> $b->[1] } @{$v->{values}};
-            $v->{township_name} = $township_name->{ $v->{township_number} };
-            if (!$v->{township_name}) {
-                say "Unknown township_number: $v->{township_number}";
+            if (!$v->{township_name} && $township_names->{ $v->{township_number} }) {
+                $v->{township_name} = $township_names->{ $v->{township_number} };
             }
         }
         my $metric_list = [ map { $metric->{$what}{$_} } sort { $a cmp $b } keys %{$metric->{$what}} ];
