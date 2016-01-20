@@ -59,6 +59,7 @@ sub MAIN {
                     candidate => $candidate,
                     values => []
                 };
+                $votes =~ s/\D//g;
                 push @{$metric->{$what}{$target}{values}}, [ $votes, $epoch ];
             }
         );
