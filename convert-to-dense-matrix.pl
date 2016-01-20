@@ -20,7 +20,14 @@ sub MAIN {
         my $series = $json->decode(scalar read_file($file, { binmode => ":utf8" }));
         for my $s (@$series) {
             my $t = $s->{target};
-            for my $v (@{$s->{values}}) {
+
+            my @metric = @{$s->{values}};
+
+            # Trim duplicate values from the beginning and the end.
+            while ( @metric > 2 && $metric[0][0] == $metric[1][0] )   { shift @metric; }
+            while ( @metric > 2 && $metric[-1][0] == $metric[-2][0] ) { pop @metric; }
+
+            for my $v (@metric) {
                 push @seen_t, $v->[1];
                 $mat->{$t}{ $v->[1] } = $v->[0];
             }
@@ -28,6 +35,7 @@ sub MAIN {
 
         my @matrix;
         my ($min,$max) = minmax(@seen_t);
+        push @matrix, ["metric", ($min..$max)];
         for my $target (keys %$mat) {
             my $metric = $mat->{$target};
             my @row = ($target);
