@@ -82,7 +82,13 @@ sub MAIN {
         open my $ts_fh, ">", "data/${what}/time-series-graphite";
         for (@$metric_list) {
             my $target = $_->{target};
-            for (@{$_->{values}}){
+
+            my @metric = @{$_->{values}};
+            # Trim duplicate values from the beginning and the end.
+            while ( @metric > 2 && $metric[0][0] == $metric[1][0] )   { shift @metric; }
+            while ( @metric > 2 && $metric[-1][0] == $metric[-2][0] ) { pop @metric; }
+
+            for (@metric) {
                 my ($value, $t) = ($_->[0], $_->[1]);
                 say $ts_fh "$target $value $t";
             }
